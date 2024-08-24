@@ -1,0 +1,132 @@
+\documentclass[landscape, 11pt]{report}
+
+% Packages
+\usepackage[landscape]{geometry}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{geometry}
+\usepackage{graphicx}
+
+% Options
+\graphicspath{ {../figures/} {./figures/}}
+\geometry{left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm}
+\setlength\parindent{0pt}
+
+% Title
+\title{
+	\includegraphics[scale=0.07]{logo}\\
+	\vspace{0.5em}
+	Языки программирования. Семантика и система типов\\
+	\vspace{0.2em}
+	\Large Теоретическое задание. Тема 4
+}
+\author{Бронников Егор}
+\date{}
+
+
+\begin{document}
+	
+	% Титул
+	
+	\maketitle
+	
+	\vspace{-0.5cm}
+	\hrule
+	\vspace{0.5cm}
+	
+	% Задание 1
+	
+	\textbf{Задание 1.} Выпишите функцию раскрытия сокращений, соответствующую такому варианту цикла \verb|for|, для простого типизированного $\lambda$-исчисления с логическими выражениями, списками и комбинатором неподвижной точки (исключая \verb|letrec|!).
+	
+	\vspace{0.2cm}
+	
+	\textit{Решение.}
+	
+	\vspace{0.2cm}
+	
+	\textit{Функция раскрытия сокращений.}
+	
+	\vspace{-0.6cm}
+	
+	\begin{equation*}
+		\begin{split}
+			\mathtt{for} &::= \\
+			& fix \, ( \\
+			& \quad \lambda \, for : T \rightarrow (T \rightarrow  Bool) \rightarrow (T \rightarrow T) \rightarrow (T \rightarrow Unit) \rightarrow List[T] \, . \\
+			& \quad \lambda t_1 : T . \, \lambda t_2 : T \rightarrow Bool . \, \lambda t_3 : T \rightarrow T . \, \lambda t_4 : T \rightarrow Unit . \\
+			& \qquad if \; t_2 \, t_1 \; then \\
+			& \hspace{1cm} cons[T] \; t_1 \, \left(\left(\lambda x : Unit . \; t_4 \, t_1 \right) \left(for \; (t_3 \; t_1) \, t_2 \; t_3 \; t_4 \right)\right) \\
+			& \qquad else \\
+			& \hspace{1cm} nil[T] \\
+			& )
+		\end{split}
+	\end{equation*}
+
+	\vspace{0.2cm}
+	\hrule
+	\vspace{0.5cm}
+	
+	% Задание 2
+
+	\textbf{Задание 2.} Покажите, что функция раскрытия сокращений сохраняет типизацию, если возможно. Иначе -- продемонстрируйте на контрпримере, почему сохранение типизации невозможно.
+
+	\vspace{0.2cm}
+
+	\textit{Решение.}
+
+	\vspace{0.2cm}
+	
+	Для демонстрации сохранения типизации достаточно показать:
+	
+	\vspace{-0.2cm}
+	
+	\begin{itemize}
+		\item[] (а) Сохранение типизации для аргументов $t_1$, $t_2$, $t_3$, $t_4$;
+		\item[] (b) Сохранение типизации для $for$.
+	\end{itemize} 	
+
+	\textit{(a) Сохранение типизации для аргументов} $t_1$, $t_2$, $t_3$, $t_4$.
+
+	\vspace{0.2cm}
+	
+	Терм $t_1$ сохраняет типизацию по правилу типизации \textit{T-Var}.
+	
+	Терм $t_2$ сохраняет типизацию по правилу типизации \textit{T-Abs}, поскольку возвращает значение, тип которого указан после стрелки и соответствует типу Bool.  
+	
+	Терм $t_3$ сохраняет типизацию по правилу \textit{T-Abs}, поскольку возвращает значение того же типа, который был дан в качестве аргумента.
+	
+	\newpage
+	
+	Терм $t_4$ сохраняет типизацию по правилу \textit{T-Abs}, поскольку выражение будет типизировано как Unit.
+	
+	\vspace{0.5cm}
+	
+	\textit{(b) Сохранение типизации для} $for$.
+
+	\vspace{0.2cm}
+
+	Терм $for$ сохраняет типизацию за счёт правил типизации комбинатора неподвижной точки \textit{T-Fix}, абстракции \textit{T-Abs}, применения \textit{T-App}, логических выражений \textit{T-If}, списков \textit{T-Nil} и \textit{T-Sec}. В конечном итоге дерево на верхнем уровне будет сохранять типизацию за счёт правила типизации \textit{T-Var}.
+
+	\vspace{0.5cm}
+
+	\textit{Ответ.} Функция раскрытия сокращений для цикла \verb|for| будет сохранять типизацию.
+
+	\vspace{0.5cm}
+	\hrule
+	\vspace{0.5cm}
+	
+	% Задание 3
+	
+	\textbf{Задание 3.} Можно ли убрать явную аннотацию типа \verb|for[T]|? В любых выражениях или только в некоторых? Аргументируйте свой ответ.
+	
+	\vspace{0.5cm}
+	
+	\textit{Ответ.} Явную аннотацию типа \verb|for[T]| можно убрать только тогда, когда известен тип первого аргумента $t_1$. В выражениях, где первый аргумент $t_1$ является хорошо типизированным. Явную аннотацию можно убрать, так как можем вывести тип \verb|for| через тип первого аргумента.
+	
+	\vspace{0.5cm}
+	\hrule
+	\vspace{0.5cm}
+	
+\end{document}
