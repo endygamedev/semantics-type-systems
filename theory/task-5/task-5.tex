@@ -1,0 +1,265 @@
+\documentclass[landscape, 11pt]{report}
+
+% Packages
+\usepackage[landscape]{geometry}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{geometry}
+\usepackage{graphicx}
+
+% Options
+\graphicspath{ {../figures/} {./figures/}}
+\geometry{left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm}
+\setlength\parindent{0pt}
+
+% Title
+\title{
+	\includegraphics[scale=0.07]{logo}\\
+	\vspace{0.5em}
+	Языки программирования. Семантика и система типов\\
+	\vspace{0.2em}
+	\Large Теоретическое задание. Тема 5
+}
+\author{Бронников Егор}
+\date{}
+
+
+\begin{document}
+	
+	% Титул
+	
+	\maketitle
+	
+	% Задание
+	
+	\vspace{-0.5cm}
+	\hrule
+	\vspace{0.5cm}
+	
+	Расширьте доказательство теоремы о нормализации простого типизированного $\lambda$-исчисления, добавив поддержку арифметических выражений, \verb|let|-связываний и типов-сумм.
+	
+	\vspace{0.5cm}
+	\hrule
+	\vspace{0.5cm}
+	
+	% Задание 1
+	
+	\textbf{Задание 1.} Расширьте определение $R_T(t)$ для случаев:
+	
+	\begin{itemize}
+		\item $T = Nat$
+		\item $T = T_1 + T_2$
+	\end{itemize}
+	
+	\textit{Решение.}
+	
+	\vspace{0.2cm}
+	
+	\textit{Случай 1.} $T = Nat$.
+	
+	\vspace{0.2cm}
+	
+	$R_{Nat}(t)$, если $t$ завершаем.
+
+	Более подробно можно рассмотреть термы, которые добавляются при добавлении типа $Nat$:
+	
+	\vspace{-0.2cm}
+	
+	\begin{itemize}
+		\item $R_{Nat}(0)$ -- очевидно, так как 0 -- значение;
+		\item $R_{Nat}(succ \; t)$ -- если $R_{Nat}(t)$ завершаем;
+		\item $R_{Nat}(pred \; t)$ -- если $R_{Nat}(t)$ завершаем;
+		\item $R_{Nat}(iszero \; t)$ -- если $R_{Nat}(t)$ завершаем.
+	\end{itemize}
+
+	\vspace{0.2cm}
+
+	\textit{Случай 2.} $T = T_1 + T_2$.
+	
+	\vspace{0.2cm}
+	
+	$R_{T_1 + T_2}(t)$, если $t$ завершаем и существует $R_{T_1}(inl \; t)$ и $R_{T_2}(inr \; t)$.
+	
+	Более подробно можно рассмотреть термы, которые добавляются при добавлении типа $T_1 + T_2$:
+	
+	\vspace{-0.2cm}
+	
+	\begin{itemize}
+		\item $R_{T_1 + T_2}(inl \; t)$ -- если $R_{T_1}(t)$ завершаем;
+		\item $R_{T_1 + T_2}(inr \; t)$ -- если $R_{T_2}(t)$ завершаем;
+		\item $R_{T_1 + T_2}(case \; t \; of \; inl \; x \Rightarrow t \; | \; inr \; x \Rightarrow t)$ -- если $R_{T_1}(t)$ и $R_{T_2}(t)$ завершаем.
+	\end{itemize}
+	
+	\hrule
+	\vspace{0.5cm}
+	
+	\newpage
+	
+	% Задание 2
+	
+	\vspace{-0.5cm}
+	\hrule
+	\vspace{0.5cm}
+	
+	\textbf{Задание 2.} Расширьте доказательство леммы о сохранении свойства $R_T$.
+	
+	\vspace{0.2cm}
+	
+	\textit{Решение.}
+	
+	\vspace{0.2cm}
+	
+	\textit{Лемма (о сохранении свойства $R_T$).} Пусть $\cdot \vdash t : T$ и $t \longrightarrow t'$. Тогда $R_T(t)$ тогда и только тогда, когда $R_T(t')$.
+	
+	\vspace{0.2cm}
+
+	\textit{Случай 1.} $T = Nat$.
+
+	\vspace{0.2cm}
+	
+	Рассмотреть термы, которые добавляются при добавлении типа $Nat$:
+	
+	\begin{itemize}
+		\item $R_{Nat}(0)$ -- очевидно, так как 0 -- значение;
+		\item $R_{Nat}(succ \; t)$ -- если $R_{Nat}(t)$ завершаем из вычисления $succ$, так как $t \rightarrow t'$ тогда и только тогда, когда $succ \; t \rightarrow succ \; t'$;
+		\item $R_{Nat}(pred \; t)$ -- если $R_{Nat}(t)$ завершаем из вычисления $pred$, так как $t \rightarrow t'$ тогда и только тогда, когда $pred \; t \rightarrow pred \; t'$;
+		\item $R_{Nat}(iszero \; t)$ -- если $R_{Nat}(t)$ завершаем из вычисления $iszero$, так как $t \rightarrow t'$ тогда и только тогда, когда $iszero \; t \rightarrow iszero \; t'$.
+	\end{itemize}
+
+	\textit{Случай 2.} $T = T_1 + T_2$.
+
+	\vspace{0.2cm}
+	
+	Если $t$ является выражением типа $T_1 + T_2$, то это значит, что оно либо имеет форму $inl \; t_1$ для некоторого терма $t_1 : T_1$, либо $inr \; t_2$ для некоторого терма $t_2 : T_2$.
+	
+	\vspace{0.2cm}
+	
+	В процессе вычисления $t \rightarrow t'$ сохранение типа означает, что структура выражения ($inl$ или $inr$) сохраняется, и соответственно, сохраняется свойство $R_T$.
+	
+	% Задание 3
+	
+	\vspace{0.5cm}
+	\hrule
+	\vspace{0.5cm}
+	
+	\textbf{Задание 3.} Расширьте доказательство леммы о нормализации открытых термов, рассмотрев следующие правила типизации:
+	
+	\begin{itemize}
+		\item T-Zero, T-Succ, T-Pred, T-IsZero;
+		\item T-Inl, T-Inr, T-Case;
+		\item T-Let.
+	\end{itemize}
+
+	\vspace{0.2cm}
+	
+	\textit{Решение.}
+	
+	\vspace{0.2cm}
+	
+	\textit{Лемма (о нормализации открытых термов).} Если $x_1 : T_1, ..., x_n : T_n \vdash t : T$, а $v_1, ..., v_n$ -- замкнутые значения типов $T_1, ..., T_n$, такие что $R_{T_i}(v_i)$ для каждого $i$, то $R_T([x_1 \mapsto v_1, ..., x_n \mapsto v_n]t)$.
+	
+	\newpage
+	
+	\textit{Правила типизации.}
+	
+	\vspace{0.2cm}
+	
+	\textit{1. T-Zero.}
+	
+	\vspace{0.2cm}
+	
+	$\dfrac{}{0 : Nat}$ T-Zero
+	
+	\vspace{0.2cm}
+	
+	$R_{Nat}([x_1 \mapsto v_1, ..., x_n \mapsto v_n]0)$ -- завершается, так как 0 -- значение.
+
+	\vspace{0.2cm}
+	
+	\textit{2. T-Succ.}
+	
+	\vspace{0.2cm}
+	
+	$\dfrac{t : Nat}{succ \; t : Nat}$ T-Succ
+	
+	\vspace{0.2cm}
+	
+	Пусть $R_{Nat}([x_1 \mapsto v_1, ..., x_n \mapsto v_n]t)$ -- завершается, тогда $t \rightarrow \, ^{*}v : Nat$. Из правил вычисления $succ$ и предположения \newline
+	$succ \; t \rightarrow \, ^{*} succ \; v : Nat$ получаем, что $R_{Nat}(succ \; t)$.
+	
+	\vspace{0.2cm}
+	
+	\textit{3. T-Pred.}
+	
+	\vspace{0.2cm}
+	
+	$\dfrac{t : Nat}{pred \; t : Nat}$ T-Pred
+	
+	\vspace{0.2cm}
+	
+	Пусть $R_{Nat}([x_1 \mapsto v_1, ..., x_n \mapsto v_n]t)$ -- завершается, тогда $t \rightarrow \, ^{*}v : Nat$. Из правил вычисления $pred$ и предположения \newline
+	$pred \; t \rightarrow \, ^{*} pred \; v : Nat$ получаем, что $R_{Nat}(pred \; t)$.
+	
+	\vspace{0.2cm}
+	
+	\textit{4. T-IsZero.}
+	
+	\vspace{0.2cm}
+	
+	$\dfrac{t : Nat}{iszero \; t : Bool}$ T-IsZero
+	
+	\vspace{0.2cm}
+	
+	Пусть $R_{Nat}([x_1 \mapsto v_1, ..., x_n \mapsto v_n]t)$ -- завершается, тогда $t \rightarrow \, ^{*}v : Nat$ и $iszero \; t \rightarrow \, ^{*}iszero \; t \rightarrow true \, | \, false : Bool$, тогда получаем $R_{Bool}(iszero \; t)$.
+	
+	\vspace{0.2cm}
+	
+	\textit{5. T-Inl.}
+	
+	\vspace{0.2cm}
+	
+	$\dfrac{\Gamma \vdash t_1 : T}{\Gamma \vdash inl \; t_1 : T_1 + T_2}$ T-Inl
+	
+	\vspace{0.2cm}
+	
+	Пусть $R_{T_1}([x_1 \mapsto v_1, ..., x_n \mapsto v_n]t_1)$ -- завершается, тогда $t_1 \rightarrow \, ^{*}v : T_1$ и $inl \; [x_1 \mapsto v_1, ..., x_n \mapsto v_n]t \rightarrow \, ^{*}inl \; v$, значит $R_{T_1}(inl \; t)$.
+
+	\vspace{0.2cm}
+	
+	\textit{6. T-Inr.}
+
+	\vspace{0.2cm}
+	
+	$\dfrac{\Gamma \vdash t_2 : T}{\Gamma \vdash inr \; t_2 : T_1 + T_2}$ T-Inr
+	
+	\vspace{0.2cm}
+	
+	Пусть $R_{T_2}([x_1 \mapsto v_1, ..., x_n \mapsto v_n]t_2)$ -- завершается, тогда $t_2 \rightarrow \, ^{*}v : T_2$ и $inr \; [x_1 \mapsto v_1, ..., x_n \mapsto v_n]t \rightarrow \, ^{*}inr \; v$, значит $R_{T_2}(inr \; t)$.
+	
+	\newpage
+
+	\textit{7. T-Case.}
+	
+	\vspace{0.2cm}
+	
+	$\dfrac{\Gamma \vdash t_1 : T_1 + T_2 \quad \Gamma, x : T_1 \vdash t_2 : C \quad \Gamma, x : T_2 \vdash t_3 : C}{\Gamma \vdash case \; t_1 \; of \; inl \, x \Rightarrow t_2 \; | \; inr \, x \Rightarrow t_3 : C}$ T-Case
+	
+	\vspace{0.2cm}
+	
+	По правилам вычисления $t_1 := inl \, v_{t_2} \; | \; inr \, v_{t_3}$, то есть всё завершается исходя из предыдущих рассмотренных случаев.
+	
+	\vspace{0.2cm}
+
+	\textit{8. T-Let.}
+	
+	\vspace{0.2cm}
+	
+	$\dfrac{\Gamma \vdash t_1 : T_1 \quad \Gamma, x : T_1 \vdash t_2 : T_2}{\Gamma \vdash let \; x = t_1 \; in \; t_2 : T_2}$ T-Let
+	
+	\vspace{0.2cm}
+	
+	Пусть $R_{T_1}([x_1 \mapsto v_1, ..., x_n \mapsto v_n]t_1)$ и $R_{T_2}([x \mapsto v_x]t_2)$ -- завершаются, тогда $[x_1 \mapsto v_1, ..., x_n \mapsto v_n]t_1 \rightarrow \; ^{*}v_{t_1}$, \newline
+	значит $[x_1 \mapsto v_1, ..., x_n \mapsto v_n]t_2 \rightarrow \; ^{*}v_{t_2}$, следовательно всё завершается.
+\end{document}
