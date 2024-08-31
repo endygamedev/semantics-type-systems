@@ -1,0 +1,209 @@
+\documentclass[landscape, 11pt]{report}
+
+% Packages
+\usepackage[landscape]{geometry}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{geometry}
+\usepackage{graphicx}
+
+% Options
+\graphicspath{ {../figures/} {./figures/}}
+\geometry{left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm}
+\setlength\parindent{0pt}
+
+% Title
+\title{
+\includegraphics[scale=0.07]{logo}\\
+\vspace{0.5em}
+Языки программирования. Семантика и система типов\\
+\vspace{0.2em}
+\Large Теоретическое задание. Тема 9
+}
+\author{Бронников Егор}
+\date{}
+
+
+\begin{document}
+
+% Титул
+
+\maketitle
+
+% Задание
+
+\vspace{-0.5cm}
+\hrule
+\vspace{0.5cm}
+
+Следуя определениям императивных объектов с использованием открытой рекурсии, реализуйте подклассы \verb|SetCounter| с возможностью сохранять текущее состояние и откатываться к (одному из) прежних состояний. В своей реализации вы можете использовать абстрации-заглушки или ссылки-заглушки.
+
+\vspace{0.5cm}
+\hrule
+\vspace{0.5cm}
+
+% Задание 1
+
+\textbf{Задание 1.} Реализуйте класс \verb|SingleBackupCounter| (функции \verb|singleBackupCounterClass| и \verb|newSingleBackupCounter|).
+
+\begin{verbatim}
+	SingleBackupCounter = {
+	    get : Unit -> Nat,
+	    set : Nat -> Unit,
+	    inc : Unit -> Unit,
+	    backup : Unit -> Unit,
+	    restore : Unit -> Unit
+	}
+\end{verbatim}
+
+
+\textit{Решение.}
+
+\begin{verbatim}
+	SingleBackupCounterRep = { x : Ref Nat, backup : Ref <nothing : Unit, just : T>}
+\end{verbatim}
+
+\begin{verbatim}
+	SetCounter = {
+	    get : Unit -> Nat,
+	    set : Nat -> Unit,
+	    inc : Unit -> Unit
+	}
+\end{verbatim}
+
+\vfill
+
+\footnotesize
+
+\begin{center}
+	\textit{Смотреть продолжение на следующей странице.}
+\end{center}
+
+\normalsize
+
+\newpage
+
+\begin{flalign*}
+	&let \; singleBackupCounter = & \\
+	&\quad \lambda \, rep : SingleBackupCounterRep \, .& \\
+	&\qquad \lambda \, self : SingleBackupCounter .& \\
+	&\qquad \quad let \; super = SetCounter \; rep \; self \; in& \\
+	&\qquad \qquad \{ \, get = super .get,& \\
+	&\qquad \qquad \; \, \, set = super .set,& \\
+	&\qquad \qquad \; \, \, inc = super .inc,& \\
+	&\qquad \qquad \; \, \, backup = \lambda \, \_ : Unit . \, rep.backup \, := \, <just = !rep.x>,& \\
+	&\qquad \qquad \; \, \, restore = \lambda \, \_ : Unit . \, case \; !rep.backup \; of& \\
+	&\hspace{5cm} <nothing = \_> \; => \; unit \; |& \\
+	&\hspace{5cm} <just = x> \; => \; rep.x := x \; \}& \\
+	&in& \\
+	&\quad let \; newSingleBackupCounter =& \\
+	&\qquad \lambda \_ : Unit .& \\
+	&\qquad \quad let \; rep = \{ x = ref \; 0, \; backup = ref <nothing = unit> \} \; in& \\
+	&\qquad \quad fix \; (singleBackupCounter \; rep)& \\
+\end{flalign*}
+
+\hrule
+\vspace{0.5cm}
+
+% Задание 2
+
+\textbf{Задание 2.} Используйте списки, чтобы реализовать класс \verb|BackupCounter|, который хранит стек сохранённых состояний (представленный списком). Повторный вызов \verb|restore| должен быть поддержан (т.е. \verb|restore| сбрасывает историю сохранённых состояний).
+
+\begin{verbatim}
+	BackupCounter = {
+	    get : Unit -> Nat,
+	    set : Nat -> Unit,
+	    inc : Unit -> Unit,
+	    backup : Unit -> Unit,
+	    restore : Nat -> Unit // аргумент - индекс на стеке
+	}
+\end{verbatim}
+
+\vfill
+
+\footnotesize
+
+\begin{center}
+	\textit{Смотреть продолжение на следующей странице.}
+\end{center}
+
+\normalsize
+
+\newpage
+
+\textit{Решение.}
+
+\begin{verbatim}
+	BackupCounterRep = { x : Ref Nat, backup : Ref List Nat }
+\end{verbatim}
+
+\vspace{-0.5cm}
+
+\begin{flalign*}
+	&letrec \; getByIndex = & \\
+	&\quad \lambda \, list : List \, Nat \, .& \\
+	&\quad \lambda \, index : Nat .& \\
+	&\qquad if \; \, iszero \; index \; \, then \; head \; list \; \, else \; \, getByIndex \, (tail \; list) \, (pred \; index)&
+\end{flalign*}
+
+\vspace{-0.5cm}
+
+\begin{flalign*}
+	&let \; backupCounter = & \\
+	&\quad \lambda \, rep : BackupCounterRep \, .& \\
+	&\qquad \lambda \, self : BackupCounter .& \\
+	&\qquad \quad let \; super = SetCounter \; rep \; self \; in& \\
+	&\qquad \qquad \{ \, get = super .get,& \\
+	&\qquad \qquad \; \, \, set = super .set,& \\
+	&\qquad \qquad \; \, \, inc = super .inc,& \\
+	&\qquad \qquad \; \, \, backup = \lambda \, \_ : Unit . \, rep.backup \, := \, cons \;  !rep.x \; !rep.backup,& \\
+	&\qquad \qquad \; \, \, restore = \lambda \, i : Nat . \, super.set \; (getByIndex \; !rep.backup \; i) \}& \\
+	&in& \\
+	&\quad let \; newBackupCounter =& \\
+	&\qquad \lambda \_ : Unit .& \\
+	&\qquad \quad let \; rep = \{ x = ref \; 0, \; backup = ref \; nil [Nat] \} \; in& \\
+	&\qquad \quad fix \; (backupCounter \; rep)& \\
+\end{flalign*}
+
+\newpage
+
+% Задание 3
+
+\textbf{Задание 3.} Используйте списки, чтобы реализовать класс \verb|AutoBackupCounter|, который автоматически сохраняет состояние при каждом \verb|set|. Реализация \verb|inc| не должна быть переопределена, но должна провоцировать сохранение (\verb|backup|), поскольку метод \verb|inc| в классе \verb|SetCounter| реализован через вызов метода \verb|set|.
+
+\begin{verbatim}
+	AutoBackupCounter = {
+	    get : Unit -> Nat,
+	    set : Nat -> Unit,
+	    inc : Unit -> Unit,
+	    restore : Nat -> Unit // аргумент - индекс на стеке
+	}
+\end{verbatim}
+
+\textit{Решение.}
+
+\begin{verbatim}
+	AutoBackupCounterRep = { x : Ref Nat, backup : Ref List Nat }
+\end{verbatim}
+
+\vspace{-0.5cm}
+
+\begin{flalign*}
+	&let \; autoBackupCounter = & \\
+	&\quad \lambda \, rep : AutoBackupCounterRep \, .& \\
+	&\qquad \lambda \, self : AutoBackupCounter .& \\
+	&\qquad \quad let \; super = SetCounter \; rep \; self \; in& \\
+	&\qquad \qquad \{ \, get = super .get,& \\
+	&\qquad \qquad \; \, \, set = \lambda \, i : Nat . \, (rep.backup := cons \; !rep.x \; !rep.backup; \; super.set \; i),& \\
+	&\qquad \qquad \; \, \, inc = super .inc,& \\
+	&\qquad \qquad \; \, \, restore = \lambda \, i : Nat . \, super.set \; (getByIndex \; !rep.backup \; i) \}& \\
+	&in& \\
+	&\quad let \; newAutoBackupCounter =& \\
+	&\qquad \lambda \_ : Unit .& \\
+	&\qquad \quad let \; rep = \{ x = ref \; 0, \; backup = ref \; nil [Nat] \} \; in& \\
+	&\qquad \quad fix \; (autoBackupCounter \; rep)& \\
+\end{flalign*}
+
+\end{document}
