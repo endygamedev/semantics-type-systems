@@ -1,0 +1,32 @@
+	
+	
+	+ D-NEW -							// t = new True()
+	+ D-NEW -							// f = new False()
+	+ D-NEW -							// x = new And()
+	+ D-UPDATE -						// x.l = t
+	+ D-UPDATE -						// x.r = f
+	+ D-NEW -							// y = new And()
+	+ D-UPDATE -						// y.l = x
+	+ D-UPDATE -						// y.r = x
+	+ D-CALL -							// o = y.eval()
+		+ D-UPDATE -					// b = this.l
+		+ D-NEW -						// f = new False()
+		+ D-UPDATE -					// r = this.r
+		+ D-CALL -						// o = b.if(r, f)
+			+ D-CALL -					// o = this.eval()
+				+ D-UPDATE -			// b = this.l
+				+ D-NEW -				// f = new False()
+				+ D-UPDATE -			// r = this.r
+				+ D-CALL -				// o = b.if(r, f)
+					+ D-RETURN -		// return t
+				+ D-RETURN -			// reutrn o
+			+ D-CAST -					// b = (Bool)o
+			+ D-CALL -					// o = b.if(t, f)
+				+ D-RETURN -			// return f
+			+ D-RETURN					// return o
+		+ D-RETURN -					// return o
+	+ D-RETURN -						// return o
+	+ D-FINISHED
+	
+
+
